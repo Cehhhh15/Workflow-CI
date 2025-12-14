@@ -1,0 +1,43 @@
+name: MLflow CI Pipeline
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Ambil kode dari repo
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Setup Python
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      # Install MLflow & Dependencies
+      - name: Install dependencies
+        run: |
+          pip install mlflow pandas scikit-learn
+
+      # Run MLflow Project
+      - name: Run MLflow Project
+        run: |
+          cd MLProject
+          mlflow run . --no-conda
+
+      # Commit Hasil Artifact
+      - name: Commit MLruns to Repo
+        if: always()
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add MLProject/mlruns
+          git commit -m "Add mlruns artifacts" || echo "No changes to commit"
+          git push
