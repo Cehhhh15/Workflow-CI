@@ -1,0 +1,15 @@
+digest: d112d8d0
+name: dataset
+profile: '{"num_rows": 299, "num_elements": 3588}'
+schema: '{"mlflow_colspec": [{"type": "long", "name": "Gender", "required": true},
+  {"type": "long", "name": "Age", "required": true}, {"type": "long", "name": "Occupation",
+  "required": true}, {"type": "double", "name": "Sleep Duration", "required": true},
+  {"type": "long", "name": "Quality of Sleep", "required": true}, {"type": "long",
+  "name": "Physical Activity Level", "required": true}, {"type": "long", "name": "Stress
+  Level", "required": true}, {"type": "long", "name": "BMI Category", "required":
+  true}, {"type": "long", "name": "Heart Rate", "required": true}, {"type": "long",
+  "name": "Daily Steps", "required": true}, {"type": "long", "name": "BP_Systolic",
+  "required": true}, {"type": "long", "name": "BP_Diastolic", "required": true}]}'
+source: '{"tags": {"mlflow.user": "runner", "mlflow.source.name": "modelling.py",
+  "mlflow.source.type": "LOCAL", "mlflow.source.git.commit": "9a3b533f5c5a47e0be439cb53886096e1f6faaa7"}}'
+source_type: code
