@@ -6,9 +6,8 @@ import mlflow
 import os
 
 def train_model():
-    # Load Data
+    # Setup Path
     dataset_path = 'Sleep_health_clean.csv'
-    
     if not os.path.exists(dataset_path):
         dataset_path = os.path.join('MLProject', 'Sleep_health_clean.csv')
 
@@ -20,21 +19,22 @@ def train_model():
         print("Error: File csv tidak ditemukan.")
         return
 
-    # Sesuaikan nama kolom target
+    # Handle Target Column
     target_col = 'Sleep Disorder' if 'Sleep Disorder' in df.columns else 'Sleep_Disorder'
-    
+    if target_col not in df.columns:
+        print(f"Error: Kolom target '{target_col}' tidak ditemukan.")
+        return
+
     X = df.drop(target_col, axis=1)
     y = df[target_col]
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Set Experiment
-    mlflow.set_experiment("CI_Workflow_Experiment")
-
     # Autolog
     mlflow.autolog()
 
-    with mlflow.start_run(run_name="CI_Run_RandomForest"):
+    print("Memulai training...")
+    with mlflow.start_run() as run:
         model = RandomForestClassifier(n_estimators=100, random_state=42)
         model.fit(X_train, y_train)
         
@@ -42,8 +42,14 @@ def train_model():
         acc = accuracy_score(y_test, y_pred)
         print(f"Akurasi: {acc}")
         
-        # Simpan metrik manual agar terbaca di log
+        # Log manual metrik tambahan
         mlflow.log_metric("accuracy_manual", acc)
+
+        # Simpan Run ID
+        run_id = run.info.run_id
+        with open("run_id.txt", "w") as f:
+            f.write(run_id)
+        print(f"Run ID {run_id} saved to run_id.txt")
 
 if __name__ == "__main__":
     train_model()
