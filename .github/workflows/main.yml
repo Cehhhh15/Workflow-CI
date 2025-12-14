@@ -6,38 +6,48 @@ on:
   pull_request:
     branches: ["main"]
 
+permissions:
+  contents: write # Memberikan izin script untuk melakukan git push
+
 jobs:
   build-and-run:
     runs-on: ubuntu-latest
 
     steps:
-      # Ambil kode dari repo
+      # 1. Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Setup Python
-      - name: Set up Python 3.12
+      # 2. Setup Python
+      - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
-          python-version: "3.12"
+          python-version: "3.10"
 
-      # Install MLflow & Dependencies
+      # 3. Install Dependencies
       - name: Install dependencies
         run: |
-          pip install mlflow pandas scikit-learn
+          python -m pip install --upgrade pip
+          pip install mlflow==2.19.0 pandas scikit-learn matplotlib seaborn dagshub
 
-      # Run MLflow Project
+      # 4. Run MLflow Project (FIXED)
+      # Menggunakan --env-manager=local sebagai pengganti --no-conda
       - name: Run MLflow Project
         run: |
           cd MLProject
-          mlflow run . --no-conda
+          mlflow run . --env-manager=local
 
-      # Commit Hasil Artifact
+      # 5. Commit MLruns to Repo
+      # Hanya dijalankan jika langkah sebelumnya SUKSES (success())
       - name: Commit MLruns to Repo
-        if: always()
+        if: success()
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+
+          # Tambahkan folder mlruns (biasanya terbuat di dalam folder MLProject)
           git add MLProject/mlruns
-          git commit -m "Add mlruns artifacts" || echo "No changes to commit"
+
+          # Commit dan Push
+          git commit -m "Add mlruns artifacts from CI" || echo "No changes to commit"
           git push
