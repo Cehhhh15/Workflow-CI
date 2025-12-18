@@ -3,53 +3,34 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import mlflow
-import os
 
 def train_model():
-    # Setup Path
-    dataset_path = 'Sleep_health_clean.csv'
-    if not os.path.exists(dataset_path):
-        dataset_path = os.path.join('MLProject', 'Sleep_health_clean.csv')
+    # Load Data
+    print("Memuat data...")
+    df = pd.read_csv('../Eksperimen_SML_Christian-Daniel/01_preprocessing/data_clean/Sleep_health_clean.csv')
 
-    print(f"Memuat data dari: {dataset_path}")
-    
-    try:
-        df = pd.read_csv(dataset_path)
-    except FileNotFoundError:
-        print("Error: File csv tidak ditemukan.")
-        return
+    # Pisahkan Fitur dan Target
+    X = df.drop('Sleep Disorder', axis=1)
+    y = df['Sleep Disorder']
 
-    # Handle Target Column
-    target_col = 'Sleep Disorder' if 'Sleep Disorder' in df.columns else 'Sleep_Disorder'
-    if target_col not in df.columns:
-        print(f"Error: Kolom target '{target_col}' tidak ditemukan.")
-        return
-
-    X = df.drop(target_col, axis=1)
-    y = df[target_col]
-
+    # Split Data
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Autolog
+    # Set Experiment
+    mlflow.set_experiment("Sleep_Disorder_Basic")
+
+    # Training dengan Autolog
+    print("Mulai Training Basic...")
     mlflow.autolog()
 
-    print("Memulai training...")
-    with mlflow.start_run() as run:
-        model = RandomForestClassifier(n_estimators=100, random_state=42)
+    with mlflow.start_run(run_name="Basic_RandomForest"):
+        model = RandomForestClassifier(n_estimators=150, random_state=42)
         model.fit(X_train, y_train)
         
+        # Evaluasi
         y_pred = model.predict(X_test)
         acc = accuracy_score(y_test, y_pred)
-        print(f"Akurasi: {acc}")
-        
-        # Log manual metrik tambahan
-        mlflow.log_metric("accuracy_manual", acc)
-
-        # Simpan Run ID
-        run_id = run.info.run_id
-        with open("run_id.txt", "w") as f:
-            f.write(run_id)
-        print(f"Run ID {run_id} saved to run_id.txt")
+        print(f"Akurasi Model: {acc}")
 
 if __name__ == "__main__":
     train_model()
