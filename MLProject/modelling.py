@@ -7,7 +7,7 @@ import mlflow
 def train_model():
     # Load Data
     print("Memuat data...")
-    df = pd.read_csv('../Eksperimen_SML_Christian-Daniel/01_preprocessing/data_clean/Sleep_health_clean.csv')
+    df = pd.read_csv('Sleep_health_clean.csv')
 
     # Pisahkan Fitur dan Target
     X = df.drop('Sleep Disorder', axis=1)
