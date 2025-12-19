@@ -1,0 +1,15 @@
+artifact_uri: file:///home/runner/work/Workflow-CI/Workflow-CI/MLProject/mlruns/0/5c37c870ef26432798cddfcec21bf358/artifacts
+end_time: 1766111421215
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 5c37c870ef26432798cddfcec21bf358
+run_name: exultant-squid-287
+run_uuid: 5c37c870ef26432798cddfcec21bf358
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1766111412727
+status: 3
+tags: []
+user_id: runner
